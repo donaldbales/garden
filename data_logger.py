@@ -1,3 +1,5 @@
+#!/home/don/python/bin/python3
+
 from datetime import datetime
 import os
 from pathlib import Path
@@ -6,15 +8,16 @@ import subprocess
 import sys
 import time
 
+sys.stdout = open('/home/don/garden/data_logger.log', 'at')
+sys.stderr = open('/home/don/garden/data_logger.err', 'at')
+
+omask = os.umask(0o000)
+
 os.system('modprobe w1-gpio')
 os.system('modprobe w1-therm')
 
 GPIO.setmode(GPIO.BCM)
 #GPIO.setwarnings(False)
-#print("BCM:  " + str(GPIO.BCM))
-#print("BOARD:" + str(GPIO.BOARD))
-#print(GPIO.getmode())
-#print(GPIO.RPI_INFO)
 
 channel_list = [20,21]
 GPIO.setup(channel_list, GPIO.OUT)
@@ -82,16 +85,16 @@ thermometer_dir = '/sys/bus/w1/devices/'
 
 def rpi_temp():
     completed_process = subprocess.run(['/usr/bin/vcgencmd', ' measure_temp'], capture_output=True)
-    #print(completed_process);
+    #print(completed_process, flush=True);
     output = str(completed_process.stdout)
-    #print(output)
+    #print(output, flush=True)
     equals_pos = output.find('=')
-    #print(equals_pos)
+    #print(equals_pos, flush=True)
     tic_pos = output.find("'")
-    #print(tic_pos)
+    #print(tic_pos, flush=True)
     c = float(output[equals_pos + 1:tic_pos])
     f = round((c * 9.0 / 5.0) + 32.0, 2)
-    #print("RPi Temp: ", c, f)
+    #print("RPi Temp: ", c, f, flush=True)
     return f
 
 def ymd_path(dt):
@@ -123,7 +126,7 @@ def write_data(dt, data):
     data_path = Path(ymd_path(dt))
     if (not data_path.exists()):
         result = data_path.mkdir(mode=0o777, parents=True)
-        #print(result)
+        #print(result, flush=True)
     data_file = ymd_path(dt) + '/' + ymdh_filename(dt)
     file_object = open(data_file, 'a')
     file_object.write(data.to_tsv())
@@ -136,12 +139,12 @@ try:
         # Try to align to five minute, zero seconds
         while (dt.minute in one_minute_before and \
                dt.second >= 29):
-            print(str(dt.second))
+            #print(str(dt.second), flush=True)
             time.sleep(1)
             dt = datetime.now()
 
         data = Data(dt)
-        #print(str(data.sample_date))
+        #print(str(data.sample_date), flush=True)
         data.temp_rpi = rpi_temp()
         for i in range(5):
             thermometer = thermometers[i]
@@ -150,9 +153,9 @@ try:
             except Exception as error:
                 c = None
                 f = None
-                print('Error reading thermometer ' + str(i) + ' ' + thermometer + ': ' + str(error))
-                print('Error reading thermometer ' + str(i) + ' ' + thermometer + ': ' + str(error), file=sys.stderr)
-            #print(thermometer, c, f)
+                print('Error reading thermometer ' + str(i) + ' ' + thermometer + ': ' + str(error), flush=True)
+                print('Error reading thermometer ' + str(i) + ' ' + thermometer + ': ' + str(error), file=sys.stderr, flush=True)
+            #print(thermometer, c, f, flush=True)
             match thermometer:
                 case '28-23f3d446b2b6':
                     data.temp_air_east = f
@@ -168,7 +171,8 @@ try:
             data.temp_air_east > 90.0):
             data.actuator_east = 'Open'
             GPIO.output(ACTUATOR_EAST, GPIO.HIGH)
-        else:
+        elif (data.temp_air_east != None and \
+              data.temp_air_east < 90.0 - 3.0):
             data.actuator_east = 'Closed'
             GPIO.output(ACTUATOR_EAST, GPIO.LOW)
         time.sleep(1)
@@ -176,26 +180,28 @@ try:
             data.temp_air_west > 90.0):
             data.actuator_west = 'Open'
             GPIO.output(ACTUATOR_WEST, GPIO.HIGH)
-        else:
+        elif (data.temp_air_west != None and \
+              data.temp_air_west < 90.0 - 3.0):
             data.actuator_west = 'Closed'
             GPIO.output(ACTUATOR_WEST, GPIO.LOW)
-        print(data.to_json())
+        print(data.to_json(), flush=True)
 
         if (dt.minute in on_five_minutes and \
             dt.second <= 29) or \
             data.actuator_east == 'Open' or \
             data.actuator_west == 'Open':
-            print('Writing data for ' + data.sample_date)
+            print('Writing data for ' + data.sample_date, flush=True)
             try: 
                 write_data(dt, data)
             except Exception as error:
-                print('Error writing data ' + data.to_json() + ': ' + error)
-                print('Error writing data ' + data.to_json() + ': ' + error, file=sys.stderr)
+                print('Error writing data ' + data.to_json() + ': ' + str(error), flush=True)
+                print('Error writing data ' + data.to_json() + ': ' + str(error), file=sys.stderr, flush=True)
 
         # Wait for 29 seconds
         time.sleep(29);
 
 except KeyboardInterrupt:
+    os.umask(omask)
     # Clean up the GPIO pins on exit
     GPIO.cleanup()
-    #print("Program exited cleanly")
+    #print("Program exited cleanly", flush=True)
