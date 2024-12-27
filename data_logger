@@ -1,3 +1,0 @@
-#!/bin/bash
-set -x
-/home/don/python/bin/python -u /home/don/garden/data_logger.py >>/home/don/garden/data_logger.log 2>>/home/don/garden/data_logger.err
