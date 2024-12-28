@@ -41,7 +41,7 @@ log("starting up")
 
 # wait for a network connection
 log("waiting for a network connection")
-#time.sleep(60)
+time.sleep(60)
 
 data_path = '/home/don/data'
 
