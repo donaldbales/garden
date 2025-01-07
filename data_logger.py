@@ -172,6 +172,11 @@ try:
             data.actuator_east = 'Open'
             GPIO.output(ACTUATOR_EAST, GPIO.HIGH)
         elif (data.temp_air_east != None and \
+            data.temp_outside != None and \
+            data.temp_air_east < data.temp_outside):
+            data.actuator_east = 'Open'
+            GPIO.output(ACTUATOR_EAST, GPIO.HIGH)
+        elif (data.temp_air_east != None and \
               data.temp_air_east < 90.0 - 3.0):
             data.actuator_east = 'Closed'
             GPIO.output(ACTUATOR_EAST, GPIO.LOW)
@@ -180,6 +185,15 @@ try:
             data.temp_air_west > 90.0):
             data.actuator_west = 'Open'
             GPIO.output(ACTUATOR_WEST, GPIO.HIGH)
+        # 2025-01-04: I added 6 galons of water in platcis gallong bottles 
+        # to the west bed. That helped keep the temperature 1 degress higher 
+        # than the outside. So I'm going to remove the temp is higher outside
+        # if statement below.
+        #elif (data.temp_air_west != None and \
+        #    data.temp_outside != None and \
+        #    data.temp_air_west < data.temp_outside):
+        #    data.actuator_west = 'Open'
+        #    GPIO.output(ACTUATOR_WEST, GPIO.HIGH)
         elif (data.temp_air_west != None and \
               data.temp_air_west < 90.0 - 3.0):
             data.actuator_west = 'Closed'
