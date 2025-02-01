@@ -167,26 +167,44 @@ try:
                     data.temp_soil_west = f
                 case '28-442ed446aa6c':
                     data.temp_outside = f
-        if (data.temp_air_east != None and \
-            data.temp_air_east > 90.0):
-            data.actuator_east = 'Open'
-            GPIO.output(ACTUATOR_EAST, GPIO.HIGH)
-        elif (data.temp_air_east != None and \
-            data.temp_outside != None and \
-            data.temp_air_east < data.temp_outside):
-            data.actuator_east = 'Open'
-            GPIO.output(ACTUATOR_EAST, GPIO.HIGH)
-        elif (data.temp_air_east != None and \
-              data.temp_air_east < 90.0 - 3.0):
-            data.actuator_east = 'Closed'
-            GPIO.output(ACTUATOR_EAST, GPIO.LOW)
+        # 2025-01-23: Temporarily turn off the actuators in order
+        # to overheat the bedds, thereby heating the soil up to 
+        # 60 degrees
+        #if (data.temp_air_east != None and \
+        #    data.temp_air_east > 90.0):
+        #    data.actuator_east = 'Open'
+        #    GPIO.output(ACTUATOR_EAST, GPIO.HIGH)
+        
+        # 2025-01-20: I'm going to start series of experimental 
+        # configurations on the east bed, so I'm going to remove 
+        # the temp is higher outside if statement below.
+        #elif (data.temp_air_east != None and \
+        #    data.temp_outside != None and \
+        #    data.temp_air_east < data.temp_outside):
+        #    data.actuator_east = 'Open'
+        #    GPIO.output(ACTUATOR_EAST, GPIO.HIGH)
+        
+        # 2025-01-23: Temporarily turn off the actuators in order
+        # to overheat the bedds, thereby heating the soil up to 
+        # 60 degrees
+        #elif (data.temp_air_east != None and \
+        #      data.temp_air_east < 90.0 - 3.0):
+        #    data.actuator_east = 'Closed'
+        #    GPIO.output(ACTUATOR_EAST, GPIO.LOW)
+        GPIO.output(ACTUATOR_EAST, GPIO.LOW)
+
         time.sleep(1)
-        if (data.temp_air_west != None and \
-            data.temp_air_west > 90.0):
-            data.actuator_west = 'Open'
-            GPIO.output(ACTUATOR_WEST, GPIO.HIGH)
-        # 2025-01-04: I added 6 galons of water in platcis gallong bottles 
-        # to the west bed. That helped keep the temperature 1 degress higher 
+        
+        # 2025-01-23: Temporarily turn off the actuators in order
+        # to overheat the bedds, thereby heating the soil up to 
+        # 60 degrees
+        #if (data.temp_air_west != None and \
+        #    data.temp_air_west > 90.0):
+        #    data.actuator_west = 'Open'
+        #    GPIO.output(ACTUATOR_WEST, GPIO.HIGH)
+
+        # 2025-01-04: I added 6 gallons of water in plastic gallon bottles 
+        # to the west bed. That helped keep the temperature 1 degree higher 
         # than the outside. So I'm going to remove the temp is higher outside
         # if statement below.
         #elif (data.temp_air_west != None and \
@@ -194,10 +212,16 @@ try:
         #    data.temp_air_west < data.temp_outside):
         #    data.actuator_west = 'Open'
         #    GPIO.output(ACTUATOR_WEST, GPIO.HIGH)
-        elif (data.temp_air_west != None and \
-              data.temp_air_west < 90.0 - 3.0):
-            data.actuator_west = 'Closed'
-            GPIO.output(ACTUATOR_WEST, GPIO.LOW)
+
+        # 2025-01-23: Temporarily turn off the actuators in order
+        # to overheat the bedds, thereby heating the soil up to 
+        # 60 degrees
+        #elif (data.temp_air_west != None and \
+        #      data.temp_air_west < 90.0 - 3.0):
+        #    data.actuator_west = 'Closed'
+        #    GPIO.output(ACTUATOR_WEST, GPIO.LOW)
+        GPIO.output(ACTUATOR_WEST, GPIO.LOW)
+
         print(data.to_json(), flush=True)
 
         if (dt.minute in on_five_minutes and \
