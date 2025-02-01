@@ -1,3 +1,6 @@
+# Local
+*.txt
+
 # Logs
 *.err
 logs
