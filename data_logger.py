@@ -1,10 +1,12 @@
 #!/home/don/python/bin/python3
 
 from datetime import datetime
+from email.message import EmailMessage
 import os
 from pathlib import Path
 import RPi.GPIO as GPIO
 import subprocess
+import smtplib
 import sys
 import time
 
@@ -97,6 +99,24 @@ def rpi_temp():
     #print("RPi Temp: ", c, f, flush=True)
     return f
 
+def send_notification(body):
+    message = EmailMessage()
+    message.set_content(body)
+    message['Subject'] = "raspberrypi-3-garden Alert"
+    message['From'] = 'don@donaldbales.com'
+    message['To'] = 'donaldbales@mac.com'
+    # creates SMTP session
+    connection = smtplib.SMTP('netsol-smtp-oxcs.hostingplatform.com', 587)
+    # start TLS for security
+    connection.starttls()
+    # Authentication
+    connection.login("don@donaldbales.com", os.getenv('EMAIL_PASSWORD', ''))
+    # sending the mail
+    connection.sendmail("don@donaldbales.com", "donaldbales@mac.com", message.as_string())
+    # terminating the session
+    connection.quit()
+    return True
+
 def ymd_path(dt):
     return '/home/don/data/' + str(dt.year) + '/' + str(dt.month).rjust(2, '0') + '/' + str(dt.day).rjust(2, '0')
 
@@ -167,20 +187,36 @@ try:
                     data.temp_soil_west = f
                 case '28-442ed446aa6c':
                     data.temp_outside = f
+
+        if (data.temp_air_east  is None or \
+            data.temp_soil_east is None or \
+            data.temp_air_west  is None or \
+            data.temp_soil_west is None or \
+            data.temp_outside   is None):
+            send_notification("RPi has lost communication with a sensor.")
+
+        if (data.temp_air_east is not None and \
+            data.temp_air_east > 95.0):
+            send_notification("The east air temperature is over 95 degrees.")
+            
+        if (data.temp_air_west is not None and \
+            data.temp_air_west > 95.0):
+            send_notification("The west air temperature is over 95 degrees.")
+            
         # 2025-01-23: Temporarily turn off the actuators in order
         # to overheat the beds, thereby heating the soil up to 
         # 60 degrees
         # 2025-02-01: Turn actuators back on
-        if (data.temp_air_east != None and \
-            data.temp_air_east > 95.0):
+        if (data.temp_air_east is not None and \
+            data.temp_air_east > 90.0):
             data.actuator_east = 'Open'
             GPIO.output(ACTUATOR_EAST, GPIO.HIGH)
         
         # 2025-01-20: I'm going to start series of experimental 
         # configurations on the east bed, so I'm going to remove 
         # the temp is higher outside if statement below.
-        #elif (data.temp_air_east != None and \
-        #    data.temp_outside != None and \
+        #elif (data.temp_air_east is not None and \
+        #    data.temp_outside is not None and \
         #    data.temp_air_east < data.temp_outside):
         #    data.actuator_east = 'Open'
         #    GPIO.output(ACTUATOR_EAST, GPIO.HIGH)
@@ -189,8 +225,8 @@ try:
         # to overheat the bedds, thereby heating the soil up to 
         # 60 degrees
         # 2025-02-01: Turn actuators back on
-        elif (data.temp_air_east != None and \
-              data.temp_air_east < 90.5 - 3.0):
+        elif (data.temp_air_east is not None and \
+              data.temp_air_east < 90.0 - 3.0):
             data.actuator_east = 'Closed'
             GPIO.output(ACTUATOR_EAST, GPIO.LOW)
         #GPIO.output(ACTUATOR_EAST, GPIO.LOW)
@@ -201,8 +237,8 @@ try:
         # to overheat the bedds, thereby heating the soil up to 
         # 60 degrees
         # 2025-02-01: Turn actuators back on
-        if (data.temp_air_west != None and \
-            data.temp_air_west > 95.0):
+        if (data.temp_air_west is not None and \
+            data.temp_air_west > 90.0):
             data.actuator_west = 'Open'
             GPIO.output(ACTUATOR_WEST, GPIO.HIGH)
 
@@ -210,8 +246,8 @@ try:
         # to the west bed. That helped keep the temperature 1 degree higher 
         # than the outside. So I'm going to remove the temp is higher outside
         # if statement below.
-        #elif (data.temp_air_west != None and \
-        #    data.temp_outside != None and \
+        #elif (data.temp_air_west is not None and \
+        #    data.temp_outside is not None and \
         #    data.temp_air_west < data.temp_outside):
         #    data.actuator_west = 'Open'
         #    GPIO.output(ACTUATOR_WEST, GPIO.HIGH)
@@ -220,8 +256,8 @@ try:
         # to overheat the bedds, thereby heating the soil up to 
         # 60 degrees
         # 2025-02-01: Turn actuators back on
-        elif (data.temp_air_west != None and \
-              data.temp_air_west < 90.5 - 3.0):
+        elif (data.temp_air_west is not None and \
+              data.temp_air_west < 90.0 - 3.0):
             data.actuator_west = 'Closed'
             GPIO.output(ACTUATOR_WEST, GPIO.LOW)
         #GPIO.output(ACTUATOR_WEST, GPIO.LOW)

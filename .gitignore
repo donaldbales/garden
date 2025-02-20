@@ -1,5 +1,7 @@
 # Local
 *.txt
+*.log.*
+*.err.*
 
 # Logs
 *.err
