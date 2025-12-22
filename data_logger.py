@@ -185,17 +185,16 @@ try:
                 print('Error reading thermometer ' + str(i) + ' ' + thermometer + ': ' + str(error), flush=True)
                 print('Error reading thermometer ' + str(i) + ' ' + thermometer + ': ' + str(error), file=sys.stderr, flush=True)
             print(thermometer, c, f, flush=True)
-            match thermometer:
-                case thermometers[0]:
-                    data.temp_air_east = f
-                case thermometers[1]:
-                    data.temp_soil_east = f
-                case thermometers[2]:
-                    data.temp_air_west = f
-                case thermometers[3]:
-                    data.temp_soil_west = f
-                case thermometers[4]:
-                    data.temp_outside = f
+            if   (thermometer == thermometers[0]):
+                data.temp_air_east = f
+            elif (thermometer == thermometers[1]):
+                data.temp_soil_east = f
+            elif (thermometer == thermometers[2]):
+                data.temp_air_west = f
+            elif (thermometer == thermometers[3]):
+                data.temp_soil_west = f
+            elif (thermometer == thermometers[4]):
+                data.temp_outside = f
 
         if (data.temp_air_east  is None or \
             data.temp_soil_east is None or \
