@@ -102,7 +102,7 @@ def rpi_temp():
     #print(tic_pos, flush=True)
     c = float(output[equals_pos + 1:tic_pos])
     f = round((c * 9.0 / 5.0) + 32.0, 2)
-    print("RPi Temp: ", c, f, flush=True)
+    #print("RPi Temp: ", c, f, flush=True)
     return f
 
 def send_notification(body):
