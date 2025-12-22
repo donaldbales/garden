@@ -1,0 +1,9 @@
+touch data_logger.err
+touch data_logger.log
+touch data_sender.err
+touch data_sender.log
+chmod 666 data_logger.err
+chmod 666 data_logger.log
+chmod 666 data_sender.err
+chmod 666 data_sender.log
+
