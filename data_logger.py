@@ -186,15 +186,15 @@ try:
                 print('Error reading thermometer ' + str(i) + ' ' + thermometer + ': ' + str(error), file=sys.stderr, flush=True)
             print(thermometer, c, f, flush=True)
             match thermometer:
-                case '28-23f3d446b2b6':
+                case thermometers[0]:
                     data.temp_air_east = f
-                case '28-5c02d446f6b9':
+                case thermometers[1]:
                     data.temp_soil_east = f
-                case '28-1ac5d446ca10':
+                case thermometers[2]:
                     data.temp_air_west = f
-                case '28-1534d446ffb3':
+                case thermometers[3]:
                     data.temp_soil_west = f
-                case '28-442ed446aa6c':
+                case thermometers[4]:
                     data.temp_outside = f
 
         if (data.temp_air_east  is None or \
