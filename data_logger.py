@@ -80,10 +80,14 @@ class Data:
     temp_soil_east = None
     temp_soil_west = None
 
-one_minute_before = (4, 9, 14, 19, 24, 29, 34, 39, 44, 49, 54, 59)
+germ_yyyy_mm_dd = '2025-12-22'
+grow_yyyy_mm_dd = '2026-01-02'
 on_five_minutes = (0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55)
-thermometers = ('28-23f3d446b2b6', '28-5c02d446f6b9', '28-1ac5d446ca10', '28-1534d446ffb3', '28-442ed446aa6c')
+one_minute_before = (4, 9, 14, 19, 24, 29, 34, 39, 44, 49, 54, 59)
+temp_max_germ = 85
+temp_max_grow = 75
 thermometer_dir = '/sys/bus/w1/devices/'
+thermometers = ('28-23f3d446b2b6', '28-5c02d446f6b9', '28-1ac5d446ca10', '28-1534d446ffb3', '28-442ed446aa6c')
 
 def rpi_temp():
     completed_process = subprocess.run(['/usr/bin/vcgencmd', ' measure_temp'], capture_output=True)
@@ -155,6 +159,7 @@ def write_data(dt, data):
 try:
     while True:
         dt = datetime.now()
+        d_yyyy_mm_dd = dt.isoformat()[:10]
 
         # Try to align to five minute, zero seconds
         while (dt.minute in one_minute_before and \
@@ -162,6 +167,7 @@ try:
             #print(str(dt.second), flush=True)
             time.sleep(1)
             dt = datetime.now()
+            d_yyyy_mm_dd = dt.isoformat()[:10]
 
         data = Data(dt)
         #print(str(data.sample_date), flush=True)
@@ -203,64 +209,65 @@ try:
             data.temp_air_west > 95.0):
             send_notification("The west air temperature is over 95 degrees.")
             
-        # 2025-01-23: Temporarily turn off the actuators in order
-        # to overheat the beds, thereby heating the soil up to 
-        # 60 degrees
-        # 2025-02-01: Turn actuators back on
-        if (data.temp_air_east is not None and \
-            data.temp_air_east > 90.0):
-            data.actuator_east = 'Open'
-            GPIO.output(ACTUATOR_EAST, GPIO.HIGH)
-        
-        # 2025-01-20: I'm going to start series of experimental 
-        # configurations on the east bed, so I'm going to remove 
-        # the temp is higher outside if statement below.
-        #elif (data.temp_air_east is not None and \
-        #    data.temp_outside is not None and \
-        #    data.temp_air_east < data.temp_outside):
-        #    data.actuator_east = 'Open'
-        #    GPIO.output(ACTUATOR_EAST, GPIO.HIGH)
-        
-        # 2025-01-23: Temporarily turn off the actuators in order
-        # to overheat the bedds, thereby heating the soil up to 
-        # 60 degrees
-        # 2025-02-01: Turn actuators back on
-        elif (data.temp_air_east is not None and \
-              data.temp_air_east < 90.0 - 3.0):
-            data.actuator_east = 'Closed'
-            GPIO.output(ACTUATOR_EAST, GPIO.LOW)
-        #GPIO.output(ACTUATOR_EAST, GPIO.LOW)
+            if (d_yyyy_mm_dd < germ_yyyy_mm_dd):
+                # if it is before the germination start date
+                # close the lids to warm up the soil
 
-        time.sleep(1)
-        
-        # 2025-01-23: Temporarily turn off the actuators in order
-        # to overheat the bedds, thereby heating the soil up to 
-        # 60 degrees
-        # 2025-02-01: Turn actuators back on
-        if (data.temp_air_west is not None and \
-            data.temp_air_west > 90.0):
-            data.actuator_west = 'Open'
-            GPIO.output(ACTUATOR_WEST, GPIO.HIGH)
+                GPIO.output(ACTUATOR_EAST, GPIO.LOW)
 
-        # 2025-01-04: I added 6 gallons of water in plastic gallon bottles 
-        # to the west bed. That helped keep the temperature 1 degree higher 
-        # than the outside. So I'm going to remove the temp is higher outside
-        # if statement below.
-        #elif (data.temp_air_west is not None and \
-        #    data.temp_outside is not None and \
-        #    data.temp_air_west < data.temp_outside):
-        #    data.actuator_west = 'Open'
-        #    GPIO.output(ACTUATOR_WEST, GPIO.HIGH)
+                time.sleep(1)
+                
+                GPIO.output(ACTUATOR_WEST, GPIO.LOW)
 
-        # 2025-01-23: Temporarily turn off the actuators in order
-        # to overheat the bedds, thereby heating the soil up to 
-        # 60 degrees
-        # 2025-02-01: Turn actuators back on
-        elif (data.temp_air_west is not None and \
-              data.temp_air_west < 90.0 - 3.0):
-            data.actuator_west = 'Closed'
-            GPIO.output(ACTUATOR_WEST, GPIO.LOW)
-        #GPIO.output(ACTUATOR_WEST, GPIO.LOW)
+            elif (d_yyyy_mm_dd < grow_yyyy_mm_dd):
+                # if it is after the germination start date
+                # and before the growth start date
+                # regulate to temperature to maximize germination
+
+                if (data.temp_air_east is not None and \
+                    data.temp_air_east > temp_max_germ):
+                    data.actuator_east = 'Open'
+                    GPIO.output(ACTUATOR_EAST, GPIO.HIGH)
+                elif (data.temp_air_east is not None and \
+                      data.temp_air_east < temp_max_germ - 3.0):
+                    data.actuator_east = 'Closed'
+                    GPIO.output(ACTUATOR_EAST, GPIO.LOW)
+
+                time.sleep(1)
+                
+                if (data.temp_air_west is not None and \
+                    data.temp_air_west > temp_max_germ):
+                    data.actuator_west = 'Open'
+                    GPIO.output(ACTUATOR_WEST, GPIO.HIGH)
+                elif (data.temp_air_west is not None and \
+                      data.temp_air_west < temp_max_germ - 3.0):
+                    data.actuator_west = 'Closed'
+                    GPIO.output(ACTUATOR_WEST, GPIO.LOW)
+
+            else:
+                # if it is after the germination start date
+                # and after the growth start date
+                # regulate to temperature to maximize growth
+
+                if (data.temp_air_east is not None and \
+                    data.temp_air_east > temp_max_grow):
+                    data.actuator_east = 'Open'
+                    GPIO.output(ACTUATOR_EAST, GPIO.HIGH)
+                elif (data.temp_air_east is not None and \
+                      data.temp_air_east < temp_max_grow - 3.0):
+                    data.actuator_east = 'Closed'
+                    GPIO.output(ACTUATOR_EAST, GPIO.LOW)
+
+                time.sleep(1)
+                
+                if (data.temp_air_west is not None and \
+                    data.temp_air_west > temp_max_grow):
+                    data.actuator_west = 'Open'
+                    GPIO.output(ACTUATOR_WEST, GPIO.HIGH)
+                elif (data.temp_air_west is not None and \
+                      data.temp_air_west < temp_max_grow - 3.0):
+                    data.actuator_west = 'Closed'
+                    GPIO.output(ACTUATOR_WEST, GPIO.LOW)
 
         print(data.to_json(), flush=True)
 
