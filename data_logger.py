@@ -166,12 +166,12 @@ try:
         # Try to align to five minute, zero seconds
         while (dt.minute in one_minute_before and \
                dt.second >= 29):
-            print(str(dt.second), flush=True)
+            #print(str(dt.second), flush=True)
             time.sleep(1)
             dt = datetime.now()
             d_yyyy_mm_dd = dt.isoformat()[:10]
-            print(dt, flush=True)
-            print(d_yyyy_mm_dd, flush=True)
+            #print(dt, flush=True)
+            #print(d_yyyy_mm_dd, flush=True)
         data = Data(dt)
         #print(str(data.sample_date), flush=True)
         data.temp_rpi = rpi_temp()
@@ -184,7 +184,7 @@ try:
                 f = None
                 print('Error reading thermometer ' + str(i) + ' ' + thermometer + ': ' + str(error), flush=True)
                 print('Error reading thermometer ' + str(i) + ' ' + thermometer + ': ' + str(error), file=sys.stderr, flush=True)
-            print(thermometer, c, f, flush=True)
+            #print(thermometer, c, f, flush=True)
             if   (thermometer == thermometers[0]):
                 data.temp_air_east = f
             elif (thermometer == thermometers[1]):
