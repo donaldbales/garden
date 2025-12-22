@@ -102,7 +102,7 @@ def rpi_temp():
     #print(tic_pos, flush=True)
     c = float(output[equals_pos + 1:tic_pos])
     f = round((c * 9.0 / 5.0) + 32.0, 2)
-    #print("RPi Temp: ", c, f, flush=True)
+    print("RPi Temp: ", c, f, flush=True)
     return f
 
 def send_notification(body):
@@ -170,8 +170,8 @@ try:
             time.sleep(1)
             dt = datetime.now()
             d_yyyy_mm_dd = dt.isoformat()[:10]
-            print(dt)
-            print()
+            print(dt, flush=True)
+            print(d_yyyy_mm_dd, flush=True)
         data = Data(dt)
         #print(str(data.sample_date), flush=True)
         data.temp_rpi = rpi_temp()
@@ -184,7 +184,7 @@ try:
                 f = None
                 print('Error reading thermometer ' + str(i) + ' ' + thermometer + ': ' + str(error), flush=True)
                 print('Error reading thermometer ' + str(i) + ' ' + thermometer + ': ' + str(error), file=sys.stderr, flush=True)
-            #print(thermometer, c, f, flush=True)
+            print(thermometer, c, f, flush=True)
             match thermometer:
                 case '28-23f3d446b2b6':
                     data.temp_air_east = f
