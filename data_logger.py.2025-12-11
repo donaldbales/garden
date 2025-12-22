@@ -82,7 +82,7 @@ class Data:
 
 one_minute_before = (4, 9, 14, 19, 24, 29, 34, 39, 44, 49, 54, 59)
 on_five_minutes = (0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55)
-thermometers = ('28-23f3d446b2b6', '28-5c02d446f6b9', '28-1ac5d446ca10', '28-1534d446ffb3', '28-442ed446aa6c')
+thermometers = ('28-02c3d4460f6d','28-1b16d446ac0a','28-395dd4461902','28-427ed446d918','28-67cad44668c1')
 thermometer_dir = '/sys/bus/w1/devices/'
 
 def rpi_temp():
@@ -126,12 +126,39 @@ def ymdh_filename(dt):
 def read_temp_raw(thermometer):
     device_file = thermometer_dir + thermometer + '/w1_slave'
     f = open(device_file, 'r')
+    #time.sleep(1)
     lines = f.readlines()
+    #print('read_temp_raw(' + str(thermometer) + '): 1st try: ' + str(len(lines)) + ' lines \n' + str(lines), flush=True)
+    if (len(lines) == 0):
+        lines = f.readlines()
+        #print('read_temp_raw(' + str(thermometer) + '): 2nd try: ' + str(len(lines)) + ' lines \n' + str(lines), flush=True)
+    if (len(lines) == 0):
+        lines = f.readlines()
+        #print('read_temp_raw(' + str(thermometer) + '): 3rd try: ' + str(len(lines)) + ' lines \n' + str(lines), flush=True)
+    if (len(lines) == 0):
+        lines = f.readlines()
+        #print('read_temp_raw(' + str(thermometer) + '): 4th try: ' + str(len(lines)) + ' lines \n' + str(lines), flush=True)
+    if (len(lines) == 0):
+        lines = f.readlines()
+        #print('read_temp_raw(' + str(thermometer) + '): 5th try: ' + str(len(lines)) + ' lines \n' + str(lines), flush=True)
+    if (len(lines) == 0):
+        lines = f.readlines()
+        #print('read_temp_raw(' + str(thermometer) + '): 6th try: ' + str(len(lines)) + ' lines \n' + str(lines), flush=True)
+    if (len(lines) == 0):
+        lines = f.readlines()
+        #print('read_temp_raw(' + str(thermometer) + '): 7th try: ' + str(len(lines)) + ' lines \n' + str(lines), flush=True)
+    if (len(lines) == 0):
+        lines = f.readlines()
+        #print('read_temp_raw(' + str(thermometer) + '): 8th try: ' + str(len(lines)) + ' lines \n' + str(lines), flush=True)
+    if (len(lines) == 0):
+        lines = f.readlines()
+        print('read_temp_raw(' + str(thermometer) + '): 9th try: ' + str(len(lines)) + ' lines \n' + str(lines), flush=True)
     f.close()
     return lines
  
 def read_temp(thermometer):
     lines = read_temp_raw(thermometer)
+    #print(str(lines) + '\n', flush=True)
     while lines[0].strip()[-3:] != 'YES':
         time.sleep(0.2)
         lines = read_temp_raw()
@@ -169,6 +196,7 @@ try:
         for i in range(5):
             thermometer = thermometers[i]
             try:
+                time.sleep(1)
                 c, f = read_temp(thermometer)
             except Exception as error:
                 c = None
@@ -176,16 +204,17 @@ try:
                 print('Error reading thermometer ' + str(i) + ' ' + thermometer + ': ' + str(error), flush=True)
                 print('Error reading thermometer ' + str(i) + ' ' + thermometer + ': ' + str(error), file=sys.stderr, flush=True)
             #print(thermometer, c, f, flush=True)
+            #'28-02c3d4460f6d', '28-1b16d446ac0a', '28-395dd4461902', '28-427ed446d918', '28-67cad44668c1'
             match thermometer:
-                case '28-23f3d446b2b6':
+                case '28-02c3d4460f6d':
                     data.temp_air_east = f
-                case '28-5c02d446f6b9':
+                case '28-1b16d446ac0a':
                     data.temp_soil_east = f
-                case '28-1ac5d446ca10':
+                case '28-395dd4461902':
                     data.temp_air_west = f
-                case '28-1534d446ffb3':
+                case '28-427ed446d918':
                     data.temp_soil_west = f
-                case '28-442ed446aa6c':
+                case '28-67cad44668c1':
                     data.temp_outside = f
 
         if (data.temp_air_east  is None or \
@@ -195,22 +224,24 @@ try:
             data.temp_outside   is None):
             send_notification("RPi has lost communication with a sensor.")
 
-        if (data.temp_air_east is not None and \
-            data.temp_air_east > 95.0):
-            send_notification("The east air temperature is over 95 degrees.")
-            
-        if (data.temp_air_west is not None and \
-            data.temp_air_west > 95.0):
-            send_notification("The west air temperature is over 95 degrees.")
+        #if (data.temp_air_east is not None and \
+        #    data.temp_air_east > 95.0):
+        #    send_notification("The east air temperature is over 95 degrees.")
+        #    
+        #if (data.temp_air_west is not None and \
+        #    data.temp_air_west > 95.0):
+        #    send_notification("The west air temperature is over 95 degrees.")
             
         # 2025-01-23: Temporarily turn off the actuators in order
         # to overheat the beds, thereby heating the soil up to 
         # 60 degrees
         # 2025-02-01: Turn actuators back on
-        if (data.temp_air_east is not None and \
-            data.temp_air_east > 90.0):
-            data.actuator_east = 'Open'
-            GPIO.output(ACTUATOR_EAST, GPIO.HIGH)
+
+        # 2025-04-23: Stop controlling the actuators because it's Spring
+        #if (data.temp_air_east is not None and \
+        #    data.temp_air_east > 90.0):
+        #    data.actuator_east = 'Open'
+        #    GPIO.output(ACTUATOR_EAST, GPIO.HIGH)
         
         # 2025-01-20: I'm going to start series of experimental 
         # configurations on the east bed, so I'm going to remove 
@@ -225,22 +256,27 @@ try:
         # to overheat the bedds, thereby heating the soil up to 
         # 60 degrees
         # 2025-02-01: Turn actuators back on
-        elif (data.temp_air_east is not None and \
-              data.temp_air_east < 90.0 - 3.0):
-            data.actuator_east = 'Closed'
-            GPIO.output(ACTUATOR_EAST, GPIO.LOW)
-        #GPIO.output(ACTUATOR_EAST, GPIO.LOW)
 
-        time.sleep(1)
+        # 2025-04-23: Stop controlling the actuators because it's Spring
+        #elif (data.temp_air_east is not None and \
+        #      data.temp_air_east < 90.0 - 3.0):
+        #    data.actuator_east = 'Closed'
+        #    GPIO.output(ACTUATOR_EAST, GPIO.LOW)
+        
+        GPIO.output(ACTUATOR_EAST, GPIO.LOW)
+
+        #time.sleep(1)
         
         # 2025-01-23: Temporarily turn off the actuators in order
         # to overheat the bedds, thereby heating the soil up to 
         # 60 degrees
         # 2025-02-01: Turn actuators back on
-        if (data.temp_air_west is not None and \
-            data.temp_air_west > 90.0):
-            data.actuator_west = 'Open'
-            GPIO.output(ACTUATOR_WEST, GPIO.HIGH)
+
+        # 2025-04-23: Stop controlling the actuators because it's Spring
+        #if (data.temp_air_west is not None and \
+        #    data.temp_air_west > 90.0):
+        #    data.actuator_west = 'Open'
+        #    GPIO.output(ACTUATOR_WEST, GPIO.HIGH)
 
         # 2025-01-04: I added 6 gallons of water in plastic gallon bottles 
         # to the west bed. That helped keep the temperature 1 degree higher 
@@ -256,18 +292,30 @@ try:
         # to overheat the bedds, thereby heating the soil up to 
         # 60 degrees
         # 2025-02-01: Turn actuators back on
-        elif (data.temp_air_west is not None and \
-              data.temp_air_west < 90.0 - 3.0):
-            data.actuator_west = 'Closed'
-            GPIO.output(ACTUATOR_WEST, GPIO.LOW)
-        #GPIO.output(ACTUATOR_WEST, GPIO.LOW)
+
+        # 2025-04-23: Stop controlling the actuators because it's Spring
+        #elif (data.temp_air_west is not None and \
+        #      data.temp_air_west < 90.0 - 3.0):
+        #    data.actuator_west = 'Closed'
+        #    GPIO.output(ACTUATOR_WEST, GPIO.LOW)
+        
+        GPIO.output(ACTUATOR_WEST, GPIO.LOW)
 
         print(data.to_json(), flush=True)
 
+        # 2025-03-25 too hot outside, so I've opened the lids and am ignoring the Open-ness
+        #if (dt.minute in on_five_minutes and \
+        #    dt.second <= 29) or \
+        #    data.actuator_east == 'Open' or \
+        #    data.actuator_west == 'Open':
         if (dt.minute in on_five_minutes and \
-            dt.second <= 29) or \
-            data.actuator_east == 'Open' or \
-            data.actuator_west == 'Open':
+            dt.second <= 29):
+            #if (data.temp_air_east is not None and \
+            #    data.temp_air_east > 95.0):
+            #    send_notification("The east air temperature is over 95 degrees.")
+            #if (data.temp_air_west is not None and \
+            #    data.temp_air_west > 95.0):
+            #    send_notification("The west air temperature is over 95 degrees.")
             print('Writing data for ' + data.sample_date, flush=True)
             try: 
                 write_data(dt, data)

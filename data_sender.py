@@ -31,7 +31,7 @@ import time
 sys.stdout = open('/home/don/garden/data_sender.log', 'at')
 sys.stderr = open('/home/don/garden/data_sender.err', 'at')
 
-url = 'http://192.168.0.70:3000/garden_data'
+url = 'http://192.168.0.225:3000/garden_data'
 
 def err(message):
   print(str(datetime.today()) + " data_sender: " + str(message), file=sys.stderr, flush=True)
@@ -130,12 +130,13 @@ while True:
               tokens = stripped.split('\t')
               json_str = to_json(tokens[0], tokens[1], tokens[2], tokens[3], tokens[4], tokens[5], tokens[6], tokens[7], tokens[8], tokens[9])
               data = json_str.encode('utf-8');
+              log(json_str)
               # method is POST by default if data is provided
               request = Request(url, data, headers)
               try:
                 with urlopen(request, timeout=10) as response:
                   log('Response status: ' + str(response.status))
-                  #log('Response body: \n' + str(response.read().decode("utf-8")))
+                  log('Response body: \n' + str(response.read().decode("utf-8")))
                   if (str(response.status) == '201'):
                     post_count = post_count + 1
               except HTTPError as error:
