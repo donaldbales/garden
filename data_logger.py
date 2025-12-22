@@ -1,4 +1,6 @@
 #!/home/don/python/bin/python3
+# by Don Bales
+# on 2025-12-22
 
 from datetime import datetime
 from email.message import EmailMessage
@@ -87,7 +89,7 @@ one_minute_before = (4, 9, 14, 19, 24, 29, 34, 39, 44, 49, 54, 59)
 temp_max_germ = 85
 temp_max_grow = 75
 thermometer_dir = '/sys/bus/w1/devices/'
-thermometers = ('28-23f3d446b2b6', '28-5c02d446f6b9', '28-1ac5d446ca10', '28-1534d446ffb3', '28-442ed446aa6c')
+thermometers = ('28-02c3d4460f6d','28-1b16d446ac0a','28-395dd4461902','28-427ed446d918','28-67cad44668c1')
 
 def rpi_temp():
     completed_process = subprocess.run(['/usr/bin/vcgencmd', ' measure_temp'], capture_output=True)
