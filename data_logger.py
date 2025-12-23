@@ -212,62 +212,63 @@ try:
             send_notification("The west air temperature is over 95 degrees.")
             
         if (d_yyyy_mm_dd < germ_yyyy_mm_dd):
+            print("Before germination. Closing both lids..", flush=True)
             # if it is before the germination start date
             # close the lids to warm up the soil
-
             GPIO.output(ACTUATOR_EAST, GPIO.LOW)
-
             time.sleep(1)
-            
             GPIO.output(ACTUATOR_WEST, GPIO.LOW)
 
         elif (d_yyyy_mm_dd < grow_yyyy_mm_dd):
+            print("Germinating...", flush=True)
             # if it is after the germination start date
             # and before the growth start date
             # regulate to temperature to maximize germination
-
             if (data.temp_air_east is not None and \
                 data.temp_air_east > temp_max_germ):
+                print("Opening east lid.", flush=True)
                 data.actuator_east = 'Open'
                 GPIO.output(ACTUATOR_EAST, GPIO.HIGH)
             elif (data.temp_air_east is not None and \
                   data.temp_air_east < temp_max_germ - 3.0):
+                print("Closing east lid.", flush=True)
                 data.actuator_east = 'Closed'
                 GPIO.output(ACTUATOR_EAST, GPIO.LOW)
-
             time.sleep(1)
-            
             if (data.temp_air_west is not None and \
                 data.temp_air_west > temp_max_germ):
+                print("Opening west lid.", flush=True)
                 data.actuator_west = 'Open'
                 GPIO.output(ACTUATOR_WEST, GPIO.HIGH)
             elif (data.temp_air_west is not None and \
                   data.temp_air_west < temp_max_germ - 3.0):
+                print("Closing west lid.", flush=True)
                 data.actuator_west = 'Closed'
                 GPIO.output(ACTUATOR_WEST, GPIO.LOW)
-
         else:
+            print("Growing...", flush=True)
             # if it is after the germination start date
             # and after the growth start date
             # regulate to temperature to maximize growth
-
             if (data.temp_air_east is not None and \
                 data.temp_air_east > temp_max_grow):
+                print("Opening east lid.", flush=True)
                 data.actuator_east = 'Open'
                 GPIO.output(ACTUATOR_EAST, GPIO.HIGH)
             elif (data.temp_air_east is not None and \
                   data.temp_air_east < temp_max_grow - 3.0):
+                print("Closing east lid.", flush=True)
                 data.actuator_east = 'Closed'
                 GPIO.output(ACTUATOR_EAST, GPIO.LOW)
-
             time.sleep(1)
-            
             if (data.temp_air_west is not None and \
                 data.temp_air_west > temp_max_grow):
+                print("Opening west lid.", flush=True)
                 data.actuator_west = 'Open'
                 GPIO.output(ACTUATOR_WEST, GPIO.HIGH)
             elif (data.temp_air_west is not None and \
                   data.temp_air_west < temp_max_grow - 3.0):
+                print("Closing west lid.", flush=True)
                 data.actuator_west = 'Closed'
                 GPIO.output(ACTUATOR_WEST, GPIO.LOW)
 

@@ -1,0 +1,10 @@
+set -x
+cd ~
+sudo modprobe w1-gpio
+sudo modprobe w1-therm
+ls -lap /sys/bus/w1/devices
+cat /sys/bus/w1/devices/28-02c3d4460f6d/w1_slave
+cat /sys/bus/w1/devices/28-1b16d446ac0a/w1_slave
+cat /sys/bus/w1/devices/28-395dd4461902/w1_slave
+cat /sys/bus/w1/devices/28-427ed446d918/w1_slave
+cat /sys/bus/w1/devices/28-67cad44668c1/w1_slave
