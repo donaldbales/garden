@@ -1,0 +1,1 @@
+sudo systemctl start data_logger.py

@@ -82,6 +82,7 @@ class Data:
     temp_soil_east = None
     temp_soil_west = None
 
+difference = 1.5
 germ_yyyy_mm_dd = '2025-12-22'
 grow_yyyy_mm_dd = '2026-01-02'
 on_five_minutes = (0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55)
@@ -230,7 +231,7 @@ try:
                 data.actuator_east = 'Open'
                 GPIO.output(ACTUATOR_EAST, GPIO.HIGH)
             elif (data.temp_air_east is not None and \
-                  data.temp_air_east < temp_max_germ - 3.0):
+                  data.temp_air_east < temp_max_germ - difference):
                 print("Closing east lid.", flush=True)
                 data.actuator_east = 'Closed'
                 GPIO.output(ACTUATOR_EAST, GPIO.LOW)
@@ -241,7 +242,7 @@ try:
                 data.actuator_west = 'Open'
                 GPIO.output(ACTUATOR_WEST, GPIO.HIGH)
             elif (data.temp_air_west is not None and \
-                  data.temp_air_west < temp_max_germ - 3.0):
+                  data.temp_air_west < temp_max_germ - difference):
                 print("Closing west lid.", flush=True)
                 data.actuator_west = 'Closed'
                 GPIO.output(ACTUATOR_WEST, GPIO.LOW)
@@ -256,7 +257,7 @@ try:
                 data.actuator_east = 'Open'
                 GPIO.output(ACTUATOR_EAST, GPIO.HIGH)
             elif (data.temp_air_east is not None and \
-                  data.temp_air_east < temp_max_grow - 3.0):
+                  data.temp_air_east < temp_max_grow - difference):
                 print("Closing east lid.", flush=True)
                 data.actuator_east = 'Closed'
                 GPIO.output(ACTUATOR_EAST, GPIO.LOW)
@@ -267,7 +268,7 @@ try:
                 data.actuator_west = 'Open'
                 GPIO.output(ACTUATOR_WEST, GPIO.HIGH)
             elif (data.temp_air_west is not None and \
-                  data.temp_air_west < temp_max_grow - 3.0):
+                  data.temp_air_west < temp_max_grow - difference):
                 print("Closing west lid.", flush=True)
                 data.actuator_west = 'Closed'
                 GPIO.output(ACTUATOR_WEST, GPIO.LOW)
