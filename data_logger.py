@@ -231,10 +231,14 @@ try:
                 data.actuator_east = 'Open'
                 GPIO.output(ACTUATOR_EAST, GPIO.HIGH)
             elif (data.temp_air_east is not None and \
-                  data.temp_air_east < temp_max_germ - difference):
+                  data.temp_air_east <= temp_max_germ - difference):
                 print("Closing east lid.", flush=True)
                 data.actuator_east = 'Closed'
                 GPIO.output(ACTUATOR_EAST, GPIO.LOW)
+            else:
+                print("Error reading temp_air_east, opening east lid.", flush=True)
+                data.actuator_east = 'Open'
+                GPIO.output(ACTUATOR_EAST, GPIO.HIGH)
             time.sleep(1)
             if (data.temp_air_west is not None and \
                 data.temp_air_west > temp_max_germ):
@@ -242,10 +246,14 @@ try:
                 data.actuator_west = 'Open'
                 GPIO.output(ACTUATOR_WEST, GPIO.HIGH)
             elif (data.temp_air_west is not None and \
-                  data.temp_air_west < temp_max_germ - difference):
+                  data.temp_air_west <= temp_max_germ - difference):
                 print("Closing west lid.", flush=True)
                 data.actuator_west = 'Closed'
                 GPIO.output(ACTUATOR_WEST, GPIO.LOW)
+            else:
+                print("Error reading temp_air_west, opening west lid.", flush=True)
+                data.actuator_west = 'Open'
+                GPIO.output(ACTUATOR_WEST, GPIO.HIGH)
         else:
             print("Growing...", flush=True)
             # if it is after the germination start date
@@ -257,10 +265,14 @@ try:
                 data.actuator_east = 'Open'
                 GPIO.output(ACTUATOR_EAST, GPIO.HIGH)
             elif (data.temp_air_east is not None and \
-                  data.temp_air_east < temp_max_grow - difference):
+                  data.temp_air_east <= temp_max_grow - difference):
                 print("Closing east lid.", flush=True)
                 data.actuator_east = 'Closed'
                 GPIO.output(ACTUATOR_EAST, GPIO.LOW)
+            else:
+                print("Error reading temp_air_east, opening east lid.", flush=True)
+                data.actuator_east = 'Open'
+                GPIO.output(ACTUATOR_EAST, GPIO.HIGH)
             time.sleep(1)
             if (data.temp_air_west is not None and \
                 data.temp_air_west > temp_max_grow):
@@ -268,10 +280,14 @@ try:
                 data.actuator_west = 'Open'
                 GPIO.output(ACTUATOR_WEST, GPIO.HIGH)
             elif (data.temp_air_west is not None and \
-                  data.temp_air_west < temp_max_grow - difference):
+                  data.temp_air_west <= temp_max_grow - difference):
                 print("Closing west lid.", flush=True)
                 data.actuator_west = 'Closed'
                 GPIO.output(ACTUATOR_WEST, GPIO.LOW)
+            else:
+                print("Error reading temp_air_west, opening west lid.", flush=True)
+                data.actuator_west = 'Open'
+                GPIO.output(ACTUATOR_WEST, GPIO.HIGH)
 
         print(data.to_json(), flush=True)
 
