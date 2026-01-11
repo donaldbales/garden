@@ -236,7 +236,7 @@ try:
                 data.actuator_east = 'Closed'
                 GPIO.output(ACTUATOR_EAST, GPIO.LOW)
             else:
-                print("Error reading temp_air_east, opening east lid.", flush=True)
+                print("Cooling, east lid open.", flush=True)
                 data.actuator_east = 'Open'
                 GPIO.output(ACTUATOR_EAST, GPIO.HIGH)
             time.sleep(1)
@@ -251,7 +251,7 @@ try:
                 data.actuator_west = 'Closed'
                 GPIO.output(ACTUATOR_WEST, GPIO.LOW)
             else:
-                print("Error reading temp_air_west, opening west lid.", flush=True)
+                print("Cooling, west lid open.", flush=True)
                 data.actuator_west = 'Open'
                 GPIO.output(ACTUATOR_WEST, GPIO.HIGH)
         else:
@@ -270,7 +270,7 @@ try:
                 data.actuator_east = 'Closed'
                 GPIO.output(ACTUATOR_EAST, GPIO.LOW)
             else:
-                print("Error reading temp_air_east, opening east lid.", flush=True)
+                print("Cooling, east lid open.", flush=True)
                 data.actuator_east = 'Open'
                 GPIO.output(ACTUATOR_EAST, GPIO.HIGH)
             time.sleep(1)
@@ -285,7 +285,7 @@ try:
                 data.actuator_west = 'Closed'
                 GPIO.output(ACTUATOR_WEST, GPIO.LOW)
             else:
-                print("Error reading temp_air_west, opening west lid.", flush=True)
+                print("Cooling, west lid open.", flush=True)
                 data.actuator_west = 'Open'
                 GPIO.output(ACTUATOR_WEST, GPIO.HIGH)
 
