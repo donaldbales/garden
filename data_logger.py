@@ -204,13 +204,13 @@ try:
             data.temp_outside   is None):
             send_notification("RPi has lost communication with a sensor.")
 
-        if (data.temp_air_east is not None and \
-            data.temp_air_east > 95.0):
-            send_notification("The east air temperature is over 95 degrees.")
-            
-        if (data.temp_air_west is not None and \
-            data.temp_air_west > 95.0):
-            send_notification("The west air temperature is over 95 degrees.")
+        #if (data.temp_air_east is not None and \
+        #    data.temp_air_east > 95.0):
+        #    send_notification("The east air temperature is over 95 degrees.")
+        #    
+        #if (data.temp_air_west is not None and \
+        #    data.temp_air_west > 95.0):
+        #    send_notification("The west air temperature is over 95 degrees.")
             
         if (d_yyyy_mm_dd < germ_yyyy_mm_dd):
             print("Before germination. Closing both lids..", flush=True)
