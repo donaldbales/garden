@@ -109,11 +109,11 @@ def rpi_temp():
 def send_notification(body):
     message = EmailMessage()
     message.set_content(body)
-    message['Subject'] = "raspberrypi-3-garden Alert"
+    message['Subject'] = "raspberrypi-3-garden Data Logger Alert"
     message['From'] = 'don@donaldbales.com'
     message['To'] = 'donaldbales@mac.com'
     # creates SMTP session
-    connection = smtplib.SMTP('netsol-smtp-oxcs.hostingplatform.com', 587)
+    connection = smtplib.SMTP('smtp.hostinger.com', 587)
     # start TLS for security
     connection.starttls()
     # Authentication

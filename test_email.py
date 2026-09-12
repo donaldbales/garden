@@ -9,7 +9,7 @@ def test(body):
 	msg['From'] = 'don@donaldbales.com'
 	msg['To'] = 'donaldbales@mac.com'
 	# creates SMTP session
-	s = smtplib.SMTP('netsol-smtp-oxcs.hostingplatform.com', 587)
+	s = smtplib.SMTP('smtp.hostinger.com', 587)
 	# start TLS for security
 	s.starttls()
 	# Authentication
