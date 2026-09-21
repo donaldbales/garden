@@ -160,6 +160,7 @@ def write_data(dt, data):
     file_object.close()
 
 try:
+    send_notification("data_logger.py starting up.")
     while True:
         dt = datetime.now()
         d_yyyy_mm_dd = dt.isoformat()[:10]
