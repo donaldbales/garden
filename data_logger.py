@@ -303,6 +303,11 @@ try:
                 print('Error writing data ' + data.to_json() + ': ' + str(error), flush=True)
                 print('Error writing data ' + data.to_json() + ': ' + str(error), file=sys.stderr, flush=True)
 
+        if (dt.hour   == 7 and \
+            dt.minute == 0 and \
+            dt.second <= 29):
+            send_notification("data_logger.py is running.")
+
         # Wait for 29 seconds
         time.sleep(29);
 
