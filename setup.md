@@ -240,6 +240,9 @@ CR1220 12mm Diameter - 3V Lithium Coin Cell Battery - CR1220
 
 https://www.amazon.com/dp/B06XQ1C5TN
 
+
+https://raspberry.tips/en/raspberrypi-tutorials/raspberry-pi-rtc-ds3231-setup
+
 ```
 sudo i2cdetect -y 1
 # you should see UU under 68
