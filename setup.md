@@ -240,6 +240,26 @@ CR1220 12mm Diameter - 3V Lithium Coin Cell Battery - CR1220
 
 https://www.amazon.com/dp/B06XQ1C5TN
 
+```
+sudo i2cdetect -y 1
+# you should see UU under 68
+
+sudo apt -y remove fake-hwclock
+sudo update-rc.d -f fake-hwclock remove
+
+sudo nano /lib/udev/hwclock-set
+# comment out the if statement...
+
+sudo hwclock -v -r
+# verify the time is correct
+
+date
+
+sudo hwclock -w
+
+sudo hwclock -r
+```
+
 
 ### Install an I2C soil sensor
 
