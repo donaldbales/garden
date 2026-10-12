@@ -241,25 +241,46 @@ CR1220 12mm Diameter - 3V Lithium Coin Cell Battery - CR1220
 https://www.amazon.com/dp/B06XQ1C5TN
 
 
-https://raspberry.tips/en/raspberrypi-tutorials/raspberry-pi-rtc-ds3231-setup
+From: https://raspberry.tips/en/raspberrypi-tutorials/raspberry-pi-rtc-ds3231-setup
 
 ```
+sudo apt install i2c-tools -y
+
 sudo i2cdetect -y 1
-# you should see UU under 68
+# you should see 68
 
-sudo apt -y remove fake-hwclock
-sudo update-rc.d -f fake-hwclock remove
+# modify the config
+sudo nano /boot/firmware/config.txt
 
-sudo nano /lib/udev/hwclock-set
-# comment out the if statement...
+# Add the following for DS3231
+dtoverlay=i2c-rtc,ds3231
 
-sudo hwclock -v -r
-# verify the time is correct
+Ctrl-O
+Enter
+Ctrl-X
 
+sudo reboot
+
+
+# remove fake-hwclock
+sudo apt remove fake-hwclock -y
+
+sudo apt install util-linux-extra -y
+
+# after rebooting, read the current time from the DS3231
+sudo hwclock -r
+
+# -OR-
+timedatectl
+
+# first check the system time
 date
 
+# if the Pi has internet access, the system time is 
+# already correct via NTP. Write it to the RTC module:
 sudo hwclock -w
 
+# verify
 sudo hwclock -r
 ```
 
@@ -338,6 +359,8 @@ Model EP-0099
 
 9 - GND  - Black
 
+This relay hat has 4 mustard colored relays with green terminals on a black PCB board.
+
 -OR-
 
 Electronics-Salon RPi Power Relay Board Expansion Module for Raspberry Pi A+ 3A+ B+ 2B 3B 3B+ 4B
@@ -370,14 +393,14 @@ Model D-1226H
 
 38 - GPIO20 - Relay 2
 
-39 - GPIO21 - Relay 3
+40 - GPIO21 - Relay 3
+
+This relay hat has 3 black colored relays with green terminals on a green PCB board.
 
 #### Example source
 git@github.com:donaldbales/d-1226h.git
 
-```
-pip install smbus
-```
+
 #### Additional Components
 
 Sequent Microsystems Home Automation V4 8-Layer Stackable HAT for Raspberry Pi
@@ -410,6 +433,27 @@ https://devguide.python.org/
 https://docs.circuitpython.org/en/latest/README.html
 
 https://assets.openstax.org/oscms-prodcms/media/documents/Introduction_to_Python_Programming-WEB.pdf
+
+Since the Raspi O.S. has a managed version of Python, you need to create a virtual Python environment in your home directory
+
+```
+cd ~
+python3 -m venv mypy
+```
+That command copied the managed environment Python to your ~/mypy directory located in you home directory.
+
+Edit your .profile adding the following line to put mypy env in your path.
+```
+nano .profile
+
+# scroll to the end of the file and add:
+PATH="$HOME/mypy.bin:$PATH"
+```
+Ctrl-O
+
+Enter
+
+Ctrl-X
 
 
 ### Git 
@@ -467,6 +511,9 @@ https://github.com/donaldbales/ep-0099
 
 ```
 git clone https://github.com/donaldbales/ep-0099.git
+```
+```
+pip install smbus
 ```
 
 ### Create a data collection program
