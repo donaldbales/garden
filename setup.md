@@ -3,11 +3,17 @@
 
 ## Links
 
+Raspberry Pi
+
 https://www.raspberrypi.com/
+
+Raspberry Pi GPIO
 
 https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#gpio
 
 https://pinout.xyz/pinout/gpio
+
+Adafruit Sensors
 
 https://www.adafruit.com/
 
@@ -115,12 +121,16 @@ To create a 64bit operating system image on the micro SD card:
 
 ### Find the RPi on the network
 
-``` sudo nmap -A -p22 -sS 192.168.0.0/24 2>/dev/null | grep "scan" ```
+```
+sudo nmap -A -p22 -sS 192.168.0.0/24 2>/dev/null | grep "scan"
+```
+
+Make a note of it.
 
 
 ### Enable Admin Password
 
-1. Log into the RPi using ssh rpi@<ip address>
+1. Log into the RPi using ssh rpi@\<ip address>
 2. Run sudo ``` raspi-config ```
 3. Choose: 1 System Options
 4. Choose: S10 Admin Password
@@ -131,7 +141,7 @@ To create a 64bit operating system image on the micro SD card:
 
 ### Enable VNC
 
-1. Log into the RPi using ssh rpi@<ip address>
+1. Log into the RPi using ssh rpi@\<ip address>
 2. Run sudo ``` raspi-config ```
 3. Choose: 3 Interface Options
 4. Choose: I3 VNC
@@ -142,7 +152,7 @@ To create a 64bit operating system image on the micro SD card:
 
 ### Enable SPI
 
-1. Log into the RPi using ssh rpi@<ip address>
+1. Log into the RPi using ssh rpi@\<ip address>
 2. Run sudo ``` raspi-config ```
 3. Choose: 3 Interface Options
 4. Choose: I4 SPI
@@ -153,7 +163,7 @@ To create a 64bit operating system image on the micro SD card:
 
 ### Enable I2C
 
-1. Log into the RPi using ssh rpi@<ip address>
+1. Log into the RPi using ssh rpi@\<ip address>
 2. Run sudo ``` raspi-config ```
 3. Choose: 3 Interface Options
 4. Choose: I5 I2C
@@ -164,7 +174,7 @@ To create a 64bit operating system image on the micro SD card:
 
 ### Enable 1-Wire
 
-1. Log into the RPi using ssh rpi@<ip address>
+1. Log into the RPi using ssh rpi@\<ip address>
 2. Run: sudo ``` raspi-config ```
 3. Choose: 3 Interface Options
 4. Choose: I7 1-Wire
@@ -196,7 +206,7 @@ I2C: ``` dtparam=i2c_arm=on ```
 
 ### Generate an SSH key
 
-1. Run: ``` ssh-keygen ```
+1. Run: ``` ssh-keygen -t rsa ```
 2. Use the default filename: Press Enter
 3. Do not enter a passphrase: Press Enter
 4. Do not re-enter the passphrase: Press Enter
@@ -240,6 +250,7 @@ CR1220 12mm Diameter - 3V Lithium Coin Cell Battery - CR1220
 
 https://www.amazon.com/dp/B06XQ1C5TN
 
+From Adafruit: https://learn.adafruit.com/adafruit-ds3231-precision-rtc-breakout
 
 From: https://raspberry.tips/en/raspberrypi-tutorials/raspberry-pi-rtc-ds3231-setup
 
@@ -254,26 +265,35 @@ sudo nano /boot/firmware/config.txt
 
 # Add the following for DS3231
 dtoverlay=i2c-rtc,ds3231
+```
 
 Ctrl-O
+
 Enter
+
 Ctrl-X
 
+
+```
 sudo reboot
+```
 
+Log back into your RPi.
 
+```
 # remove fake-hwclock
 sudo apt remove fake-hwclock -y
 
+# install the hwclock program
 sudo apt install util-linux-extra -y
 
 # after rebooting, read the current time from the DS3231
 sudo hwclock -r
-
 # -OR-
 timedatectl
 
-# first check the system time
+# first check the system time. If it's not correct,
+# use date to set the date and time manually.
 date
 
 # if the Pi has internet access, the system time is 
@@ -311,6 +331,10 @@ https://www.adafruit.com/product/4399
 
 https://www.amazon.com/dp/B0CN76MG6P
 
+```
+sudo i2cdetect -y 1
+# you should see 36, or if you've soldered some address points: 37, 38, or 39
+```
 
 ### Install a 1-Wire thermometer
 
@@ -442,12 +466,12 @@ python3 -m venv mypy
 ```
 That command copied the managed environment Python to your ~/mypy directory located in you home directory.
 
-Edit your .profile adding the following line to put mypy env in your path.
+Edit your .profile adding the following line to put the ``` mypy ``` virtual environment in your path.
 ```
 nano .profile
 
 # scroll to the end of the file and add:
-PATH="$HOME/mypy.bin:$PATH"
+PATH="$HOME/mypy/bin:$PATH"
 ```
 Ctrl-O
 
@@ -460,7 +484,7 @@ Ctrl-X
 
 Commands
 ```
-git clone <git repo url> 
+git clone \<git repo url> 
 ```
 
 ```
@@ -476,7 +500,16 @@ git pull
 
 ### Create a program to read the soil sensor
 
+
+https://learn.adafruit.com/adafruit-stemma-soil-sensor-i2c-capacitive-moisture-sensor
+
+
 #### Example Source
+
+Install the driver software.
+```
+pip3 install adafruit-circuitpython-seesaw
+```
 
 https://github.com/donaldbales/cap-moist-sens
 
@@ -485,6 +518,8 @@ git clone https://github.com/donaldbales/cap-moist-sens.git
 ```
 
 ### Create a program to read the 1-Wire thermometer
+
+https://www.digikey.com/en/articles/how-to-efficiently-connect-to-sensors-in-iot-endpoints-using-1-wire-communication
 
 #### Example Source
 
@@ -507,13 +542,15 @@ git clone https://github.com/donaldbales/d-1226h.git
 
 -OR-
 
+Install the driver software.
+```
+pip3 install smbus
+```
+
 https://github.com/donaldbales/ep-0099
 
 ```
 git clone https://github.com/donaldbales/ep-0099.git
-```
-```
-pip install smbus
 ```
 
 ### Create a data collection program
